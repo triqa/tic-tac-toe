@@ -1,5 +1,5 @@
-// Gameboard object: single instance
-// Wrap factory inside IIFE (module pattern)
+// Gameboard object
+// Single instance: wrap factory func inside IIFE (module pattern)
 const gameBoard = (() => {
   // Create a new empty 3 x 3 grid
   function newGrid() {
@@ -17,12 +17,30 @@ const gameBoard = (() => {
     return grid;
   }
 
+  // Return single instance gameBoard obj
   return { newGrid };
 })();
 
-console.log(gameBoard.newGrid());
+// createPlayer factory func
+// Multiple instances = NOT wrap factory func inside IIFE
+function createPlayer(name, marker) {
+  // Get the player's name
+  function getPlayerName() {
+    return name;
+  }
 
-// Player object: multiple instances
+  function getPlayerMarker() {
+    return marker;
+  }
+
+  return { getPlayerName, getPlayerMarker };
+}
+
+// console.log(gameBoard.newGrid());
+const boris = createPlayer("Boris", "X");
+const tony = createPlayer("Tony", "O");
+
+console.log(boris.getPlayerMarker());
 
 // GameController: ?single? instance
 // Controls the flow of the game
