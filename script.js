@@ -24,13 +24,21 @@ const gameBoard = (() => {
 // createPlayer factory func
 // Multiple instances = NOT wrap factory func inside IIFE
 function createPlayer(name, marker) {
+  // Tracks how many wins this player has
+  let score = 0;
+
   // Get the player's name
   function getPlayerName() {
     return name;
   }
-
+  // Get the player's marker
   function getPlayerMarker() {
     return marker;
+  }
+
+  // Get player's score
+  function getScore() {
+    return score;
   }
 
   return { getPlayerName, getPlayerMarker };
@@ -42,8 +50,10 @@ const tony = createPlayer("Tony", "O");
 
 console.log(boris.getPlayerMarker());
 
-// GameController: ?single? instance
+// gameController
+// Single instance: wrap factory func inside IIFE (module pattern)
 // Controls the flow of the game
+// gameController = (() => {})();
 
 // DisplayController: single instance
 // Display game to the UI
