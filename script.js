@@ -121,10 +121,10 @@ gameController = (() => {
   }
 
   // Check if a player has won aka
-  function checkIfWin() {
-    // Func to check if all in row are same marker, for row win
+  function isWinner() {
+    // Func to check if all in the row are the same marker
     // credit: https://builtin.com/articles/check-if-all-array-values-are-equal
-    const isRowOfMarker = (row) => row.every((marker) => marker === row[0]);
+    const isRowOfMarker = (row) => row.every((cell) => cell === marker);
 
     // Get the current player's marker
     let marker = currentPlayer.getMarker();
@@ -169,7 +169,6 @@ gameController = (() => {
     // FIX THIS !!!!!!!!!
     // Check if row win
     // (?) switch to using .some() for one line (?)
-
     for (let i = 0; i < gridSize; i++) {
       // Check each row for win
 
@@ -184,6 +183,18 @@ gameController = (() => {
     return false;
   }
 
+  function isDraw() {
+    // Checks if there is no empty spaces left on the board
+    for (let i = 0; i < 3; i++) {
+      // Check each row to see if any 0's aka empty spaces
+      isEmptyCellsLeft = board[i].some((cell) => cell === 0);
+
+      if (isEmptyCellsLeft) return false;
+    }
+    // Gone through entire board and is completely full
+    return true;
+  }
+
   // Play a round aka one marker placed
   function playRound(x, y) {
     // Place current player's marker on board
@@ -193,11 +204,14 @@ gameController = (() => {
       return false;
     }
 
-    // (!) Make sure only continue down here when player has placed marker, so not if not placed as cell already occupied
-
     // Check if there is a win after placing marker
-    if (checkIfWin()) {
+    if (isWinner()) {
       console.log(`${currentPlayer.getName()} has won`);
+    }
+
+    // Check if draw (all spaces filled)
+    if (isDraw()) {
+      console.log(`It is a DRAW.`);
     }
 
     // Switch to other player if still rounds left to pla
