@@ -1,9 +1,11 @@
 // Gameboard object
 // Single instance: wrap factory func inside IIFE (module pattern)
 const gameBoard = (() => {
+  let gridSize;
+
   // Create a new empty 3 x 3 grid
   function newGrid() {
-    const gridSize = 3;
+    gridSize = 3;
     const grid = [];
     for (let i = 0; i < gridSize; i++) {
       row = [];
@@ -17,8 +19,17 @@ const gameBoard = (() => {
     return grid;
   }
 
+  // Get the grid size
+  function getGridSize() {
+    return gridSize;
+  }
+
+  function getGrid() {
+    return grid;
+  }
+
   // Return single instance gameBoard obj
-  return { newGrid };
+  return { newGrid, getGridSize, getGrid };
 })();
 
 // createPlayer factory func
@@ -97,16 +108,103 @@ gameController = (() => {
   function placeMarker(x, y) {
     // Check if marker already on this spot
     if (board[y][x] !== 0) {
-      console.log("Cell already occupied. Try again.git");
-      return;
+      console.log("Cell already occupied. Try again");
+      return false;
     }
 
     // Place this marker on the board
     board[y][x] = currentPlayer.getMarker();
     console.log(board);
 
-    // Switch to other player
+    // Successfully placed marker
+    return true;
+  }
+
+  // Check if a player has won aka
+  function checkIfWin() {
+    // Func to check if all in row are same marker, for row win
+    // credit: https://builtin.com/articles/check-if-all-array-values-are-equal
+    const isRowOfMarker = (row) => row.every((marker) => marker === row[0]);
+
+    // Get the current player's marker
+    let marker = currentPlayer.getMarker();
+
+    // Check if got 3 of the player's marker in a row/column/diagonal
+    gridSize = gameBoard.getGridSize();
+
+    // Check if diagonal win
+    if (
+      // Top left to bottom right DONE
+      (board[0][0] === marker &&
+        board[1][1] === marker &&
+        board[2][2] === marker) ||
+      // Top right to bottom left DONE
+      (board[0][2] === marker &&
+        board[1][1] === marker &&
+        board[2][0] === marker)
+    ) {
+      console.log("Diagonal win");
+      return true;
+    }
+
+    // Check if column win DONE
+    if (
+      // First col
+      (board[0][0] === marker &&
+        board[1][0] === marker &&
+        board[2][0] === marker) ||
+      // Second col
+      (board[0][1] === marker &&
+        board[1][1] === marker &&
+        board[2][1] === marker) ||
+      // Third col
+      (board[0][2] === marker &&
+        board[1][2] === marker &&
+        board[2][2] === marker)
+    ) {
+      console.log("Column win");
+      return true;
+    }
+
+    // FIX THIS !!!!!!!!!
+    // Check if row win
+    // (?) switch to using .some() for one line (?)
+
+    for (let i = 0; i < gridSize; i++) {
+      // Check each row for win
+
+      if (isRowOfMarker(board[i])) {
+        console.log("Row win");
+        return true;
+      }
+    }
+
+    console.log("No win yet");
+    // If reached end of func, then no winner yet
+    return false;
+  }
+
+  // Play a round aka one marker placed
+  function playRound(x, y) {
+    // Place current player's marker on board
+    if (!placeMarker(x, y)) {
+      console.log("");
+      // Not successful in placing marker
+      return false;
+    }
+
+    // (!) Make sure only continue down here when player has placed marker, so not if not placed as cell already occupied
+
+    // Check if there is a win after placing marker
+    if (checkIfWin()) {
+      console.log(`${currentPlayer.getName()} has won`);
+    }
+
+    // Switch to other player if still rounds left to pla
     switchPlayer();
+
+    // Successfully played a round
+    return true;
   }
 
   // Displays the board as a nested arr ONLY in the CONSOLE
@@ -114,7 +212,7 @@ gameController = (() => {
     return board;
   }
 
-  return { startGame, switchPlayer, placeMarker, displayBoard };
+  return { startGame, switchPlayer, placeMarker, playRound, displayBoard };
 })();
 
 // DisplayController: single instance
