@@ -65,6 +65,10 @@ button {
     rgba(255, 255, 255, 0.08) 0px 1px 0px inset;
 }
 
+button:hover {
+  background-color: rgb(146, 36, 36);
+}
+
 footer {
   align-self: stretch;
   background-color: var(--main-color);
