@@ -67,8 +67,8 @@ function createPlayer(name, marker) {
 // Controls the flow of the game
 gameController = (() => {
   // Create players
-  const p1 = createPlayer("p1", "O");
-  const p2 = createPlayer("p2", "X");
+  players = [createPlayer("p1", "O"), createPlayer("p2", "X")];
+
   // Current board
   let board;
   let currentPlayer;
@@ -77,20 +77,36 @@ gameController = (() => {
     // Get a new board with nothing placed
     board = gameBoard.newGrid();
     // Reset player's scores
-    p1.resetScore();
-    p2.resetScore();
+    players[0].resetScore();
+    players[1].resetScore();
     // Set the first player
-    currentPlayer = p1;
+    currentPlayer = players[0];
 
     console.log("The game has started");
+    console.log(`${currentPlayer.getName()}'s turn`);
     return board;
+  }
+
+  // Switch to other player for their turn
+  function switchPlayer() {
+    currentPlayer = currentPlayer === players[0] ? players[1] : players[0];
+    console.log(`${currentPlayer.getName()}'s turn`);
   }
 
   // Place the current player's market at (x, y) on the board
   function placeMarker(x, y) {
+    // Check if marker already on this spot
+    if (board[y][x] !== 0) {
+      console.log("Cell already occupied. Try again.git");
+      return;
+    }
+
     // Place this marker on the board
     board[y][x] = currentPlayer.getMarker();
     console.log(board);
+
+    // Switch to other player
+    switchPlayer();
   }
 
   // Displays the board as a nested arr ONLY in the CONSOLE
@@ -98,7 +114,7 @@ gameController = (() => {
     return board;
   }
 
-  return { startGame, placeMarker, displayBoard };
+  return { startGame, switchPlayer, placeMarker, displayBoard };
 })();
 
 // DisplayController: single instance
