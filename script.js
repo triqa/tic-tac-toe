@@ -13,7 +13,7 @@ const gameBoard = (() => {
       grid.push(row);
     }
 
-    console.log("newGrid() called");
+    console.log("gameBoard.newGrid() called");
     return grid;
   }
 
@@ -62,32 +62,43 @@ function createPlayer(name, marker) {
   };
 }
 
-// console.log(gameBoard.newGrid());
-const boris = createPlayer("Boris", "X");
-const tony = createPlayer("Tony", "O");
-
-console.log(boris.getScore());
-
-tony.increaseScore();
-
-console.log(boris.getScore());
-console.log(tony.getScore());
-
 // gameController
 // Single instance: wrap factory func inside IIFE (module pattern)
 // Controls the flow of the game
 gameController = (() => {
-  return;
+  // Create players
+  const p1 = createPlayer("p1", "O");
+  const p2 = createPlayer("p2", "X");
+  // Current board
+  let board;
+
+  function startGame() {
+    // Get a new board with nothing placed
+    board = gameBoard.newGrid();
+    // Reset player's scores
+    p1.resetScore();
+    p2.resetScore();
+
+    console.log("The game has started");
+    return board;
+  }
+
+  // Displays the board as a nested arr ONLY in the CONSOLE
+  function displayBoard() {
+    return board;
+  }
+
+  return { startGame, displayBoard };
 })();
 
 // DisplayController: single instance
 // Display game to the UI
 // Wrap factory inside IIFE (module pattern)
+displayController = () => {
+  return;
+};
 
 /// RUNNING THE GAME ///
 
-// Create players
-const p1 = createPlayer("p1", "O");
-const p2 = createPlayer("p2", "X");
 // Start (new) game
-gameController.startGame();
+console.log(gameController.startGame());
