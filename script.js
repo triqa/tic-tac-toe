@@ -84,7 +84,7 @@ gameController = (() => {
   let board;
   let currentPlayer;
 
-  function startGame() {
+  function newGame() {
     // Get a new board with nothing placed
     board = gameBoard.newGrid();
     // Reset player's scores
@@ -122,15 +122,13 @@ gameController = (() => {
 
   // Check if a player has won aka
   function isWinner() {
-    // Func to check if all in the row are the same marker
-    // credit: https://builtin.com/articles/check-if-all-array-values-are-equal
-    const isRowOfMarker = (row) => row.every((cell) => cell === marker);
-
     // Get the current player's marker
     let marker = currentPlayer.getMarker();
-
     // Check if got 3 of the player's marker in a row/column/diagonal
     gridSize = gameBoard.getGridSize();
+
+    // Func to check if all in the row are the same marker
+    const isRowOfMarker = (row) => row.every((cell) => cell === marker);
 
     // Check if diagonal win
     if (
@@ -207,11 +205,13 @@ gameController = (() => {
     // Check if there is a win after placing marker
     if (isWinner()) {
       console.log(`${currentPlayer.getName()} has won`);
+      return;
     }
 
     // Check if draw (all spaces filled)
     if (isDraw()) {
       console.log(`It is a DRAW.`);
+      return;
     }
 
     // Switch to other player if still rounds left to pla
@@ -226,7 +226,7 @@ gameController = (() => {
     return board;
   }
 
-  return { startGame, switchPlayer, placeMarker, playRound, displayBoard };
+  return { newGame, switchPlayer, placeMarker, playRound, displayBoard };
 })();
 
 // DisplayController: single instance
@@ -239,5 +239,5 @@ displayController = () => {
 /// RUNNING THE GAME ///
 
 // Start (new) game
-// console.log(gameController.startGame());
+// console.log(gameController.newGame());
 // console.log(gameController.placeMarker(2, 1));
