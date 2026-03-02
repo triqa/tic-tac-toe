@@ -28,11 +28,11 @@ function createPlayer(name, marker) {
   let score = 0;
 
   // Get the player's name
-  function getPlayerName() {
+  function getName() {
     return name;
   }
   // Get the player's marker
-  function getPlayerMarker() {
+  function getMarker() {
     return marker;
   }
 
@@ -54,8 +54,8 @@ function createPlayer(name, marker) {
   }
 
   return {
-    getPlayerName,
-    getPlayerMarker,
+    getName,
+    getMarker,
     getScore,
     increaseScore,
     resetScore,
@@ -71,6 +71,7 @@ gameController = (() => {
   const p2 = createPlayer("p2", "X");
   // Current board
   let board;
+  let currentPlayer;
 
   function startGame() {
     // Get a new board with nothing placed
@@ -78,9 +79,18 @@ gameController = (() => {
     // Reset player's scores
     p1.resetScore();
     p2.resetScore();
+    // Set the first player
+    currentPlayer = p1;
 
     console.log("The game has started");
     return board;
+  }
+
+  // Place the current player's market at (x, y) on the board
+  function placeMarker(x, y) {
+    // Place this marker on the board
+    board[y][x] = currentPlayer.getMarker();
+    console.log(board);
   }
 
   // Displays the board as a nested arr ONLY in the CONSOLE
@@ -88,7 +98,7 @@ gameController = (() => {
     return board;
   }
 
-  return { startGame, displayBoard };
+  return { startGame, placeMarker, displayBoard };
 })();
 
 // DisplayController: single instance
@@ -101,4 +111,5 @@ displayController = () => {
 /// RUNNING THE GAME ///
 
 // Start (new) game
-console.log(gameController.startGame());
+// console.log(gameController.startGame());
+// console.log(gameController.placeMarker(2, 1));
