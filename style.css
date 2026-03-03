@@ -56,7 +56,8 @@ main {
 
 .board {
   display: grid;
-  grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+  grid-template: repeat(3, 35px) / repeat(3, 35px);
+  justify-content: center;
 }
 
 button {

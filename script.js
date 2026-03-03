@@ -16,7 +16,6 @@ const gameBoard = (() => {
       grid.push(row);
     }
 
-    console.log("gameBoard.newGrid() called");
     return grid;
   }
 
@@ -242,6 +241,7 @@ const gameController = (() => {
 // Wrap factory inside IIFE (module pattern)
 const displayController = (() => {
   let board;
+  let currentPlayer;
 
   // Get the game (aka the underlying console game)
   const game = gameController;
@@ -253,6 +253,9 @@ const displayController = (() => {
 
   // Update the board within the .board html element
   function updateBoard() {
+    // Remove all DOM elements from within the board before create new updated board
+    boardContainer.textContent = "";
+
     // Display the board as a grid of buttons
     for (let y = 0; y < gameBoard.getGridSize(); y++) {
       for (let x = 0; x < gameBoard.getGridSize(); x++) {
@@ -270,6 +273,13 @@ const displayController = (() => {
         cellButton.dataset.row = x;
         cellButton.dataset.column = y;
 
+        cellButton.addEventListener("click", () => {
+          // Place the current player's marker on that cell of the console board
+          game.playRound(cellButton.dataset.row, cellButton.dataset.column);
+
+          updateBoard();
+        });
+
         // Add each cell button to a cell in the html grid
         boardContainer.appendChild(cellButton);
       }
@@ -278,25 +288,15 @@ const displayController = (() => {
 
   // Updates the board after each round aka placement of marker
   function updateScreen() {
-    // TEMP: REMOVE this. Test grid
+    // /// RM: for testing
     // board = [
-    //   ["1", "2", "3"],
-    //   ["4", "5", "6"],
-    //   ["7", "8", "9"],
+    //   ["x", "O", 0],
+    //   ["x", "x", "O"],
+    //   ["O", 0, 0],
     // ];
 
-    board = [
-      ["x", "O", 0],
-      ["x", "x", "O"],
-      ["O", 0, 0],
-    ];
-
-    console.log("updatedScreen() called");
-    // Remove all DOM elements from within the board before create new updated board
-    boardContainer.textContent = "";
-
     // Get the player turn
-    const currentPlayer = game.getCurrentPlayer();
+    currentPlayer = game.getCurrentPlayer();
 
     // Display who's turn it is
     currentPlayerDiv.textContent = `${currentPlayer.getName()}'s turn`;
