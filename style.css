@@ -56,13 +56,19 @@ main {
 
 .board {
   display: grid;
-  grid-template: repeat(3, 35px) / repeat(3, 35px);
+  grid-template: repeat(3, 100px) / repeat(3, 100px);
   justify-content: center;
 }
 
 .board .cell {
+  border: 2px solid black;
   font-weight: bold;
-  font-size: 100%;
+  font-size: 3rem;
+  background-color: rgb(255, 236, 213);
+}
+
+.board .cell:hover {
+  background-color: rgb(251, 223, 189);
 }
 
 .player1 {
