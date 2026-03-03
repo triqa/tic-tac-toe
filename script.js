@@ -77,7 +77,7 @@ function createPlayer(name, marker) {
 // Controls the flow of the game
 const gameController = (() => {
   // Create players
-  players = [createPlayer("p1", "O"), createPlayer("p2", "X")];
+  players = [createPlayer("Player 1", "O"), createPlayer("Player 2", "X")];
 
   // Current board
   let board;
@@ -241,6 +241,8 @@ const gameController = (() => {
 // Display game to the UI
 // Wrap factory inside IIFE (module pattern)
 const displayController = (() => {
+  let board;
+
   // Get the game (aka the underlying console game)
   const game = gameController;
   // Get the divs from the html code
@@ -251,18 +253,20 @@ const displayController = (() => {
 
   // Updates the board after each round aka placement of marker
   function updateScreen() {
-    console.log("UPDATE SCREEN method called from clicking button");
-
-    // Remove all DOM elements from within the board
+    console.log("updatedScreen() called");
+    // Remove all DOM elements from within the board before create new updated board
     boardDiv.textContent = "";
 
-    // Get the newest version of the board & player turn
-    const board = gameBoard.getBoard();
+    // Get the player turn
     const currentPlayer = game.getCurrentPlayer();
 
     // Display who's turn it is
     currentPlayerDiv.textContent = `${currentPlayer.getName()}'s turn`;
     // TODO: display the score of each player
+
+    // TEMP: Display if board present
+    scoreDiv.textContent = board;
+    // RM above
 
     // // Display the board as a grid of buttons
     // for (let i = 0; i < board.getGridSize(); i++) {
@@ -278,8 +282,9 @@ const displayController = (() => {
   }
   // Add event listener to "NEW GAME" button that displays new board
   newGameBtn.addEventListener("click", () => {
-    console.log("New game button clicked");
-    game.newGame();
+    // Start new game. We now now have a console board.
+    board = game.newGame();
+    // Display screen contents for first time
     updateScreen();
   });
 })();
