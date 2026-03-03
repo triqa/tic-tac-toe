@@ -75,12 +75,12 @@ function createPlayer(name, marker) {
 // Single instance: wrap factory func inside IIFE (module pattern)
 // Controls the flow of the game
 const gameController = (() => {
-  // Create players
-  players = [createPlayer("Player 1", "O"), createPlayer("Player 2", "X")];
-
   // Current board
   let board;
   let currentPlayer;
+
+  // Create players
+  players = [createPlayer("Player 1", "O"), createPlayer("Player 2", "X")];
 
   function newGame() {
     // Get a new board with nothing placed
@@ -91,7 +91,6 @@ const gameController = (() => {
     // Set the first player
     currentPlayer = players[0];
 
-    console.log("The game has started");
     return board;
   }
 
@@ -212,7 +211,7 @@ const gameController = (() => {
       resultDiv.textContent = "It is a draw.";
     }
 
-    // Switch to other player if still rounds left to pla
+    // Switch to other player if still rounds left to play
     switchPlayer();
 
     // Successfully played a round
@@ -247,6 +246,7 @@ const displayController = (() => {
 
   // Get the game (aka the underlying console game)
   const game = gameController;
+
   // Get the divs from the html code
   const newGameBtn = document.querySelector(".new-game-btn");
   const scoreDiv = document.querySelector(".score");
@@ -257,6 +257,8 @@ const displayController = (() => {
   function updateBoard() {
     // Remove all DOM elements from within the board before create new updated board
     boardContainer.textContent = "";
+
+    currentPlayerDiv.textContent = `${game.getCurrentPlayer().getName()}'s turn`;
 
     // Display the board as a grid of buttons
     for (let y = 0; y < gameBoard.getGridSize(); y++) {
@@ -295,11 +297,9 @@ const displayController = (() => {
 
   // Updates the board after each round aka placement of marker
   function updateScreen() {
-    // Get the player turn
+    // // Get the player turn
     currentPlayer = game.getCurrentPlayer();
 
-    // Display who's turn it is
-    currentPlayerDiv.textContent = `${currentPlayer.getName()}'s turn`;
     // TODO: display the score of each player
 
     // Update the .board html div
