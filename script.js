@@ -24,12 +24,12 @@ const gameBoard = (() => {
     return gridSize;
   }
 
-  function getGrid() {
+  function getBoard() {
     return grid;
   }
 
   // Return single instance gameBoard obj
-  return { newGrid, getGridSize, getGrid };
+  return { newGrid, getGridSize, getBoard };
 })();
 
 // createPlayer factory func
@@ -226,14 +226,57 @@ gameController = (() => {
     return board;
   }
 
-  return { newGame, switchPlayer, placeMarker, playRound, displayBoard };
+  function getCurrentPlayer() {
+    return currentPlayer();
+  }
+
+  return {
+    newGame,
+    switchPlayer,
+    placeMarker,
+    playRound,
+    displayBoard,
+    getCurrentPlayer,
+  };
 })();
 
 // DisplayController: single instance
 // Display game to the UI
 // Wrap factory inside IIFE (module pattern)
 displayController = () => {
-  return;
+  // Get the game (aka the underlying console game)
+  const game = gameController();
+  // Get the divs from the html code
+  const newGameBtn = document.querySelector(".new-game-btn");
+  const scoreDiv = document.querySelector(".score");
+  const currentPlayerDiv = document.querySelector(".player-turn");
+  const boardDiv = document.querySelector(".board");
+
+  // Updates the board after each round aka placement of marker
+  function updateScreen() {
+    // Remove all DOM elements from within the board
+    boardDiv.textContent = "";
+
+    // Get the newest version of the board & player turn
+    const board = game.getBoard();
+    const currentPlayer = game.getCurrentPlayer();
+
+    // Display who's turn it is
+    currentPlayerDiv.textContent = `${currentPlayer.getName()}'s turn`;
+    // TODO: display the score of each player
+
+    // Display the board as a grid of buttons
+    for (let i = 0; i < board.getGridSize(); i++) {
+      for (let j = 0; i < board.getGridSize(); j++) {
+        // For each cell...
+
+        // Create a button
+        const cellButton = document.createElement("button");
+        cellButton.classList.add("cell");
+        cellButton.textContent = board[j][i];
+      }
+    }
+  }
 };
 
 /// RUNNING THE GAME ///
@@ -241,3 +284,5 @@ displayController = () => {
 // Start (new) game
 // console.log(gameController.newGame());
 // console.log(gameController.placeMarker(2, 1));
+
+displayController();
