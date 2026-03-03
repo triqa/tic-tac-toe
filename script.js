@@ -75,6 +75,8 @@ function createPlayer(name, marker) {
 // Single instance: wrap factory func inside IIFE (module pattern)
 // Controls the flow of the game
 const gameController = (() => {
+  let gameOver = false;
+
   // Current board
   let board;
   let currentPlayer;
@@ -203,12 +205,14 @@ const gameController = (() => {
     // Check if there is a win after placing marker
     if (isWinner()) {
       resultDiv.textContent = `${currentPlayer.getName()} has won :)`;
+      gameOver = true;
       return;
     }
 
     // Check if draw (all spaces filled)
     if (isDraw()) {
       resultDiv.textContent = "It is a draw.";
+      gameOver = true;
     }
 
     // Switch to other player if still rounds left to play
