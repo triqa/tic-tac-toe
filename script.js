@@ -249,13 +249,51 @@ const displayController = (() => {
   const newGameBtn = document.querySelector(".new-game-btn");
   const scoreDiv = document.querySelector(".score");
   const currentPlayerDiv = document.querySelector(".player-turn");
-  const boardDiv = document.querySelector(".board");
+  const boardContainer = document.querySelector(".board");
+
+  // Update the board within the .board html element
+  function updateBoard() {
+    // Display the board as a grid of buttons
+    for (let y = 0; y < gameBoard.getGridSize(); y++) {
+      for (let x = 0; x < gameBoard.getGridSize(); x++) {
+        // For each cell...
+
+        // Create a button
+        const cellButton = document.createElement("button");
+        cellButton.classList.add("cell");
+        // Set the textContent of this cell to the marker if a marker has been placed in this cell (otherwise empty for 0)
+        if (board[y][x]) {
+          cellButton.textContent = board[y][x];
+        }
+
+        // Add the co-ordinates of each cell button as data attributes
+        cellButton.dataset.row = x;
+        cellButton.dataset.column = y;
+
+        // Add each cell button to a cell in the html grid
+        boardContainer.appendChild(cellButton);
+      }
+    }
+  }
 
   // Updates the board after each round aka placement of marker
   function updateScreen() {
+    // TEMP: REMOVE this. Test grid
+    // board = [
+    //   ["1", "2", "3"],
+    //   ["4", "5", "6"],
+    //   ["7", "8", "9"],
+    // ];
+
+    board = [
+      ["x", "O", 0],
+      ["x", "x", "O"],
+      ["O", 0, 0],
+    ];
+
     console.log("updatedScreen() called");
     // Remove all DOM elements from within the board before create new updated board
-    boardDiv.textContent = "";
+    boardContainer.textContent = "";
 
     // Get the player turn
     const currentPlayer = game.getCurrentPlayer();
@@ -264,21 +302,8 @@ const displayController = (() => {
     currentPlayerDiv.textContent = `${currentPlayer.getName()}'s turn`;
     // TODO: display the score of each player
 
-    // TEMP: Display if board present
-    scoreDiv.textContent = board;
-    // RM above
-
-    // // Display the board as a grid of buttons
-    // for (let i = 0; i < board.getGridSize(); i++) {
-    //   for (let j = 0; i < board.getGridSize(); j++) {
-    //     // For each cell...
-
-    //     // Create a button
-    //     const cellButton = document.createElement("button");
-    //     cellButton.classList.add("cell");
-    //     cellButton.textContent = board[j][i];
-    //   }
-    // }
+    // Update the .board html div
+    updateBoard();
   }
   // Add event listener to "NEW GAME" button that displays new board
   newGameBtn.addEventListener("click", () => {

@@ -54,6 +54,11 @@ main {
   gap: 5px;
 }
 
+.board {
+  display: grid;
+  grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+}
+
 button {
   border: none;
   text-transform: uppercase;
