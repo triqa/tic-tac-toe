@@ -2,6 +2,7 @@
 // Single instance: wrap factory func inside IIFE (module pattern)
 const gameBoard = (() => {
   let gridSize;
+  let grid;
 
   // Create a new empty 3 x 3 grid
   function newGrid() {
@@ -54,13 +55,11 @@ function createPlayer(name, marker) {
 
   // Increase the player's score by 1
   function increaseScore() {
-    console.log(`${name}'s score has increased by 1`);
     score++;
   }
 
   // Reset player's score to 0
   function resetScore() {
-    console.log(`${name}'s score has been reset to 0`);
     score = 0;
   }
 
@@ -76,7 +75,7 @@ function createPlayer(name, marker) {
 // gameController
 // Single instance: wrap factory func inside IIFE (module pattern)
 // Controls the flow of the game
-gameController = (() => {
+const gameController = (() => {
   // Create players
   players = [createPlayer("p1", "O"), createPlayer("p2", "X")];
 
@@ -94,14 +93,12 @@ gameController = (() => {
     currentPlayer = players[0];
 
     console.log("The game has started");
-    console.log(`${currentPlayer.getName()}'s turn`);
     return board;
   }
 
   // Switch to other player for their turn
   function switchPlayer() {
     currentPlayer = currentPlayer === players[0] ? players[1] : players[0];
-    console.log(`${currentPlayer.getName()}'s turn`);
   }
 
   // Place the current player's market at (x, y) on the board
@@ -227,7 +224,7 @@ gameController = (() => {
   }
 
   function getCurrentPlayer() {
-    return currentPlayer();
+    return currentPlayer;
   }
 
   return {
@@ -243,9 +240,9 @@ gameController = (() => {
 // DisplayController: single instance
 // Display game to the UI
 // Wrap factory inside IIFE (module pattern)
-displayController = () => {
+const displayController = (() => {
   // Get the game (aka the underlying console game)
-  const game = gameController();
+  const game = gameController;
   // Get the divs from the html code
   const newGameBtn = document.querySelector(".new-game-btn");
   const scoreDiv = document.querySelector(".score");
@@ -254,30 +251,38 @@ displayController = () => {
 
   // Updates the board after each round aka placement of marker
   function updateScreen() {
+    console.log("UPDATE SCREEN method called from clicking button");
+
     // Remove all DOM elements from within the board
     boardDiv.textContent = "";
 
     // Get the newest version of the board & player turn
-    const board = game.getBoard();
+    const board = gameBoard.getBoard();
     const currentPlayer = game.getCurrentPlayer();
 
     // Display who's turn it is
     currentPlayerDiv.textContent = `${currentPlayer.getName()}'s turn`;
     // TODO: display the score of each player
 
-    // Display the board as a grid of buttons
-    for (let i = 0; i < board.getGridSize(); i++) {
-      for (let j = 0; i < board.getGridSize(); j++) {
-        // For each cell...
+    // // Display the board as a grid of buttons
+    // for (let i = 0; i < board.getGridSize(); i++) {
+    //   for (let j = 0; i < board.getGridSize(); j++) {
+    //     // For each cell...
 
-        // Create a button
-        const cellButton = document.createElement("button");
-        cellButton.classList.add("cell");
-        cellButton.textContent = board[j][i];
-      }
-    }
+    //     // Create a button
+    //     const cellButton = document.createElement("button");
+    //     cellButton.classList.add("cell");
+    //     cellButton.textContent = board[j][i];
+    //   }
+    // }
   }
-};
+  // Add event listener to "NEW GAME" button that displays new board
+  newGameBtn.addEventListener("click", () => {
+    console.log("New game button clicked");
+    game.newGame();
+    updateScreen();
+  });
+})();
 
 /// RUNNING THE GAME ///
 
@@ -285,4 +290,4 @@ displayController = () => {
 // console.log(gameController.newGame());
 // console.log(gameController.placeMarker(2, 1));
 
-displayController();
+displayController;
