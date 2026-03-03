@@ -202,7 +202,7 @@ const gameController = (() => {
 
     // Check if there is a win after placing marker
     if (isWinner()) {
-      resultDiv.textContent = `${currentPlayer.getName()} has won`;
+      resultDiv.textContent = `${currentPlayer.getName()} has won :)`;
       return;
     }
 

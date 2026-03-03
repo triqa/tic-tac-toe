@@ -33,12 +33,14 @@ footer {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 20px;
+  text-align: center;
 }
 
 header {
   align-self: stretch;
   background-color: var(--main-color);
+  padding: 10px;
 }
 
 h1 {
@@ -50,25 +52,34 @@ main {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 15px;
   align-items: center;
+}
+
+.score,
+.player-turn,
+.result {
+  font-weight: bold;
+  font-size: 1.8rem;
 }
 
 .board {
   display: grid;
   grid-template: repeat(3, 100px) / repeat(3, 100px);
   justify-content: center;
+  border: 10px solid rgb(89, 0, 0);
+  background-color: rgb(254, 246, 246);
 }
 
 .board .cell {
   border: 2px solid black;
   font-weight: bold;
   font-size: 3rem;
-  background-color: rgb(255, 236, 213);
+  background-color: rgb(254, 246, 246);
 }
 
 .board .cell:hover {
-  background-color: rgb(251, 223, 189);
+  background-color: rgb(255, 230, 225);
 }
 
 .player1 {
@@ -86,7 +97,7 @@ main {
   font-weight: bolder;
   letter-spacing: 0.05em;
   border-radius: 5px;
-  padding: 10px;
+  padding: 20px 30px;
   box-shadow:
     rgba(6, 24, 44, 0.4) 0px 0px 0px 2px,
     rgba(6, 24, 44, 0.65) 0px 4px 6px -1px,
@@ -100,4 +111,5 @@ main {
 footer {
   align-self: stretch;
   background-color: var(--main-color);
+  padding: 5px;
 }
