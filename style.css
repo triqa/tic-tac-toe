@@ -23,7 +23,7 @@ body {
 }
 
 h1,
-button,
+.new-game-btn,
 footer {
   color: white;
 }
@@ -42,7 +42,6 @@ header {
 }
 
 h1 {
-  text-align: center;
   text-transform: uppercase;
   word-spacing: 1rem;
 }
@@ -52,6 +51,7 @@ main {
   display: flex;
   flex-direction: column;
   gap: 5px;
+  align-items: center;
 }
 
 .board {
@@ -60,7 +60,20 @@ main {
   justify-content: center;
 }
 
-button {
+.board .cell {
+  font-weight: bold;
+  font-size: 100%;
+}
+
+.player1 {
+  color: green;
+}
+
+.player2 {
+  color: red;
+}
+
+.new-game-btn {
   border: none;
   text-transform: uppercase;
   background-color: var(--main-color);
@@ -74,16 +87,11 @@ button {
     rgba(255, 255, 255, 0.08) 0px 1px 0px inset;
 }
 
-.player-turn {
-  text-align: center;
-}
-
-button:hover {
+.new-game-btn:hover {
   background-color: rgb(146, 36, 36);
 }
 
 footer {
   align-self: stretch;
   background-color: var(--main-color);
-  text-align: center;
 }

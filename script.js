@@ -191,6 +191,9 @@ const gameController = (() => {
 
   // Play a round aka one marker placed
   function playRound(x, y) {
+    // Get div to put results of win/draw in
+    const resultDiv = document.querySelector(".result");
+
     // Place current player's marker on board
     if (!placeMarker(x, y)) {
       console.log("");
@@ -200,14 +203,13 @@ const gameController = (() => {
 
     // Check if there is a win after placing marker
     if (isWinner()) {
-      console.log(`${currentPlayer.getName()} has won`);
+      resultDiv.textContent = `${currentPlayer.getName()} has won`;
       return;
     }
 
     // Check if draw (all spaces filled)
     if (isDraw()) {
-      console.log(`It is a DRAW.`);
-      return;
+      resultDiv.textContent = "It is a draw.";
     }
 
     // Switch to other player if still rounds left to pla
@@ -262,39 +264,37 @@ const displayController = (() => {
         // For each cell...
 
         // Create a button
-        const cellButton = document.createElement("button");
-        cellButton.classList.add("cell");
+        const cellButtonEl = document.createElement("button");
+        cellButtonEl.classList.add("cell");
         // Set the textContent of this cell to the marker if a marker has been placed in this cell (otherwise empty for 0)
         if (board[y][x]) {
-          cellButton.textContent = board[y][x];
+          cellButtonEl.textContent = board[y][x];
+          if (board[y][x] === players[0].getMarker()) {
+            cellButtonEl.classList.add("player1");
+          } else {
+            cellButtonEl.classList.add("player2");
+          }
         }
 
         // Add the co-ordinates of each cell button as data attributes
-        cellButton.dataset.row = x;
-        cellButton.dataset.column = y;
+        cellButtonEl.dataset.row = x;
+        cellButtonEl.dataset.column = y;
 
-        cellButton.addEventListener("click", () => {
+        cellButtonEl.addEventListener("click", () => {
           // Place the current player's marker on that cell of the console board
-          game.playRound(cellButton.dataset.row, cellButton.dataset.column);
+          game.playRound(cellButtonEl.dataset.row, cellButtonEl.dataset.column);
 
           updateBoard();
         });
 
         // Add each cell button to a cell in the html grid
-        boardContainer.appendChild(cellButton);
+        boardContainer.appendChild(cellButtonEl);
       }
     }
   }
 
   // Updates the board after each round aka placement of marker
   function updateScreen() {
-    // /// RM: for testing
-    // board = [
-    //   ["x", "O", 0],
-    //   ["x", "x", "O"],
-    //   ["O", 0, 0],
-    // ];
-
     // Get the player turn
     currentPlayer = game.getCurrentPlayer();
 
