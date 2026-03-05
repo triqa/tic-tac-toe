@@ -1,10 +1,10 @@
-// Gameboard object
+// Underlying gameboard used to place markers
 // Single instance: wrap factory func inside IIFE (module pattern)
 const gameBoard = (() => {
   let gridSize;
   let grid;
 
-  // Create a new empty 3 x 3 grid
+  // Create a new empty grid of the chosen size
   function newGrid() {
     gridSize = 3;
     const grid = [];
@@ -19,7 +19,6 @@ const gameBoard = (() => {
     return grid;
   }
 
-  // Get the grid size
   function getGridSize() {
     return gridSize;
   }
@@ -32,32 +31,26 @@ const gameBoard = (() => {
   return { newGrid, getGridSize, getBoard };
 })();
 
-// createPlayer factory func
+// Factory func to create a new player
 // Multiple instances = NOT wrap factory func inside IIFE
 function createPlayer(name, marker) {
-  // Tracks how many wins this player has
   let score = 0;
 
-  // Get the player's name
   function getName() {
     return name;
   }
-  // Get the player's marker
   function getMarker() {
     return marker;
   }
 
-  // Get player's score
   function getScore() {
     return score;
   }
 
-  // Increase the player's score by 1
   function increaseScore() {
     score++;
   }
 
-  // Reset player's score to 0
   function resetScore() {
     score = 0;
   }
@@ -71,22 +64,19 @@ function createPlayer(name, marker) {
   };
 }
 
-// gameController
 // Single instance: wrap factory func inside IIFE (module pattern)
-// Controls the flow of the game
+// Controls the flow of the game in the console
 const gameController = (() => {
-  let gameState;
-
-  // Current board
+  let gameState; // "playing" || "win" || "draw"
   let board;
   let currentPlayer;
 
-  // Create players
   players = [createPlayer("Player 1", "O"), createPlayer("Player 2", "X")];
 
+  // Start a new game where all previous info is cleared
   function newGame() {
     gameState = "playing";
-    // Get a new board with nothing placed
+    // Get a new board with no markers placed
     board = gameBoard.newGrid();
     // Reset player's scores
     players[0].resetScore();
@@ -102,39 +92,36 @@ const gameController = (() => {
     currentPlayer = currentPlayer === players[0] ? players[1] : players[0];
   }
 
-  // Place the current player's market at (x, y) on the board
+  // Place the current player's marker in the cell chosen.
+  // The corresponding co-ordinate will be shown in the UI (using displayController) using the data x and y classes for that cell button
   function placeMarker(x, y) {
-    // Check if marker already on this spot
+    // Check if marker already on this cell
     if (board[y][x] !== 0) {
-      console.log("Cell already occupied. Try again");
       return false;
     }
 
-    // Place this marker on the board
+    // Place the marker on that cell of the board
     board[y][x] = currentPlayer.getMarker();
-    console.log(board);
 
     // Successfully placed marker
     return true;
   }
 
-  // Check if a player has won aka
+  // Check if got 3 of the player's marker in a row/column/diagonal
   function isWinner() {
-    // Get the current player's marker
     let marker = currentPlayer.getMarker();
-    // Check if got 3 of the player's marker in a row/column/diagonal
     gridSize = gameBoard.getGridSize();
 
-    // Func to check if all in the row are the same marker
+    // Checks if all in the row are the same marker
     const isRowOfMarker = (row) => row.every((cell) => cell === marker);
 
     // Check if diagonal win
     if (
-      // Top left to bottom right DONE
+      // Top left to bottom right
       (board[0][0] === marker &&
         board[1][1] === marker &&
         board[2][2] === marker) ||
-      // Top right to bottom left DONE
+      // Top right to bottom left
       (board[0][2] === marker &&
         board[1][1] === marker &&
         board[2][0] === marker)
@@ -143,7 +130,7 @@ const gameController = (() => {
       return true;
     }
 
-    // Check if column win DONE
+    // Check if column win
     if (
       // First col
       (board[0][0] === marker &&
@@ -162,30 +149,24 @@ const gameController = (() => {
       return true;
     }
 
-    // FIX THIS !!!!!!!!!
     // Check if row win
     // (?) switch to using .some() for one line (?)
     for (let i = 0; i < gridSize; i++) {
       // Check each row for win
-
       if (isRowOfMarker(board[i])) {
         console.log("Row win");
         return true;
       }
     }
 
-    console.log("No win yet");
-    // If reached end of func, then no winner yet
     return false;
   }
 
   function isDraw() {
-    // Checks if there is no empty spaces left on the board
+    // Checks if there is no empty cells left on the board
     for (let i = 0; i < 3; i++) {
-      // Check each row to see if any 0's aka empty spaces
-      isEmptyCellsLeft = board[i].some((cell) => cell === 0);
-
-      if (isEmptyCellsLeft) return false;
+      // Check each row to see if empty cells (0's) meaning still no draw
+      if (board[i].some((cell) => cell === 0)) return false;
     }
     // Gone through entire board and is completely full
     return true;
@@ -195,18 +176,17 @@ const gameController = (() => {
   function playRound(x, y) {
     // Place current player's marker on board
     if (!placeMarker(x, y)) {
-      console.log("");
       // Not successful in placing marker
       return false;
     }
 
-    // Check if there is a win after placing marker
+    // After placing marker ...
+    // Check if there is a win
     if (isWinner()) {
       gameState = "win";
       return;
     }
-
-    // Check if draw (all spaces filled)
+    // Check if draw where all spaces are filled
     if (isDraw()) {
       gameState = "draw";
       return;
@@ -215,11 +195,10 @@ const gameController = (() => {
     // Switch to other player if still rounds left to play
     switchPlayer();
 
-    // Successfully played a round
     return true;
   }
 
-  // Displays the board as a nested arr ONLY in the CONSOLE
+  // Displays the board as a nested arr in the console
   function displayBoard() {
     return board;
   }
@@ -234,8 +213,6 @@ const gameController = (() => {
 
   return {
     newGame,
-    switchPlayer,
-    placeMarker,
     playRound,
     displayBoard,
     getCurrentPlayer,
@@ -243,14 +220,11 @@ const gameController = (() => {
   };
 })();
 
-// DisplayController: single instance
-// Display game to the UI
-// Wrap factory inside IIFE (module pattern)
+// Display the game fom the gameBoard as well as details on player turn and if won/draw.
+// Wrap factory inside IIFE (module pattern), single instance
 const displayController = (() => {
   let board;
-  let currentPlayer;
-
-  // Get the game (aka the underlying console game)
+  // Get the underlying console game
   const game = gameController;
 
   // Get the divs from the html code
@@ -261,14 +235,15 @@ const displayController = (() => {
   const resultDiv = document.querySelector(".result");
 
   // Update the board within the .board html element
-  function updateBoard() {
+  function updateScreen() {
     let currentPlayerName = game.getCurrentPlayer().getName();
+
     // Remove all DOM elements from within the board before create new updated board
     boardContainer.textContent = "";
-
+    // Display the current player's turn
     currentPlayerDiv.textContent = `${currentPlayerName}'s turn`;
 
-    // Update if there is a win/draw after most recent move
+    // Display if there is a win/draw after most recent move
     switch (game.getGameState()) {
       case "playing":
         resultDiv.textContent = "";
@@ -286,28 +261,30 @@ const displayController = (() => {
       for (let x = 0; x < gameBoard.getGridSize(); x++) {
         // For each cell...
 
-        // Create a button
+        // Create a button to represent a cell to place a marker in
         const cellButtonEl = document.createElement("button");
         cellButtonEl.classList.add("cell");
-        // Set the textContent of this cell to the marker if a marker has been placed in this cell (otherwise empty for 0)
+        // Add the markers that have currently been placed on the board (otherwise stays empty, repesented as 0 in the console game)
         if (board[y][x]) {
+          // if the cell does not contain 0
           cellButtonEl.textContent = board[y][x];
+          // When placed marker, ensure added if this marker corresponds to player 1 or 2
           if (board[y][x] === players[0].getMarker()) {
             cellButtonEl.classList.add("player1");
           } else {
             cellButtonEl.classList.add("player2");
           }
         }
-
         // Add the co-ordinates of each cell button as data attributes
         cellButtonEl.dataset.row = x;
         cellButtonEl.dataset.column = y;
 
         cellButtonEl.addEventListener("click", () => {
-          // Place the current player's marker on that cell of the console board
+          // Place the current player's marker on that cell of the console
           game.playRound(cellButtonEl.dataset.row, cellButtonEl.dataset.column);
 
-          updateBoard();
+          // Display updated board with the new marker now in the UI
+          updateScreen();
         });
 
         // Add each cell button to a cell in the html grid
@@ -316,24 +293,10 @@ const displayController = (() => {
     }
   }
 
-  // Updates the board after each round aka placement of marker
-  function updateScreen() {
-    // // Get the player turn
-    currentPlayer = game.getCurrentPlayer();
-
-    // TODO: display the score of each player
-
-    // Update the .board html div
-    updateBoard();
-  }
-  // Add event listener to "NEW GAME" button that displays new board
+  // Add event listener to "NEW GAME" button that displays new board and resets info
   newGameBtn.addEventListener("click", () => {
-    // Start new game. We now now have a console board.
     board = game.newGame();
     // Display screen contents for first time
     updateScreen();
   });
 })();
-
-/// RUNNING THE GAME ///
-displayController;
