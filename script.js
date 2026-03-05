@@ -75,7 +75,7 @@ function createPlayer(name, marker) {
 // Single instance: wrap factory func inside IIFE (module pattern)
 // Controls the flow of the game
 const gameController = (() => {
-  let gameOver = false;
+  let gameState;
 
   // Current board
   let board;
@@ -85,6 +85,7 @@ const gameController = (() => {
   players = [createPlayer("Player 1", "O"), createPlayer("Player 2", "X")];
 
   function newGame() {
+    gameState = "playing";
     // Get a new board with nothing placed
     board = gameBoard.newGrid();
     // Reset player's scores
@@ -192,9 +193,6 @@ const gameController = (() => {
 
   // Play a round aka one marker placed
   function playRound(x, y) {
-    // Get div to put results of win/draw in
-    const resultDiv = document.querySelector(".result");
-
     // Place current player's marker on board
     if (!placeMarker(x, y)) {
       console.log("");
@@ -204,15 +202,14 @@ const gameController = (() => {
 
     // Check if there is a win after placing marker
     if (isWinner()) {
-      resultDiv.textContent = `${currentPlayer.getName()} has won :)`;
-      gameOver = true;
+      gameState = "win";
       return;
     }
 
     // Check if draw (all spaces filled)
     if (isDraw()) {
-      resultDiv.textContent = "It is a draw.";
-      gameOver = true;
+      gameState = "draw";
+      return;
     }
 
     // Switch to other player if still rounds left to play
@@ -231,6 +228,10 @@ const gameController = (() => {
     return currentPlayer;
   }
 
+  function getGameState() {
+    return gameState;
+  }
+
   return {
     newGame,
     switchPlayer,
@@ -238,6 +239,7 @@ const gameController = (() => {
     playRound,
     displayBoard,
     getCurrentPlayer,
+    getGameState,
   };
 })();
 
@@ -256,13 +258,28 @@ const displayController = (() => {
   const scoreDiv = document.querySelector(".score");
   const currentPlayerDiv = document.querySelector(".player-turn");
   const boardContainer = document.querySelector(".board");
+  const resultDiv = document.querySelector(".result");
 
   // Update the board within the .board html element
   function updateBoard() {
+    let currentPlayerName = game.getCurrentPlayer().getName();
     // Remove all DOM elements from within the board before create new updated board
     boardContainer.textContent = "";
 
-    currentPlayerDiv.textContent = `${game.getCurrentPlayer().getName()}'s turn`;
+    currentPlayerDiv.textContent = `${currentPlayerName}'s turn`;
+
+    // Update if there is a win/draw after most recent move
+    switch (game.getGameState()) {
+      case "playing":
+        resultDiv.textContent = "";
+        break;
+      case "win":
+        resultDiv.textContent = `${currentPlayerName} has won! :)`;
+        break;
+      case "draw":
+        resultDiv.textContent = "It is a draw.";
+        break;
+    }
 
     // Display the board as a grid of buttons
     for (let y = 0; y < gameBoard.getGridSize(); y++) {
@@ -319,9 +336,4 @@ const displayController = (() => {
 })();
 
 /// RUNNING THE GAME ///
-
-// Start (new) game
-// console.log(gameController.newGame());
-// console.log(gameController.placeMarker(2, 1));
-
 displayController;
